@@ -2,17 +2,17 @@ version: "3.8"
 services:
   backend-flask:
     environment:
-      FRONTEND_URL: "https://3000--019c8fdf-783a-74eb-bddd-cf5aafde74a4.eu-central-1-01.gitpod.dev"
-      BACKEND_URL: "https://4567--019c8fdf-783a-74eb-bddd-cf5aafde74a4.eu-central-1-01.gitpod.dev"
+      FRONTEND_URL: "https://3000--019cab17-1191-7cc0-b494-100284acabdf.eu-central-1-01.gitpod.dev"
+      BACKEND_URL: "https://4567--019cab17-1191-7cc0-b494-100284acabdf.eu-central-1-01.gitpod.dev "
       OTEL_SERVICE_NAME: "backend-flask"
       OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
       OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
-      AWS_XRAY_URL: "*4567--019c8fdf-783a-74eb-bddd-cf5aafde74a4.eu-central-1-01*"
+      AWS_XRAY_URL: "*4567--019cab17-1191-7cc0-b494-100284acabdf.eu-central-1-01.gitpod.dev*"
       AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
       AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-      ROLLBAR_ACCESS_TOKEN: "4461b206c59e42f2a7276552965e933b"
+      ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
     build: ./backend-flask
     ports:
       - "4567:4567"
@@ -20,7 +20,7 @@ services:
       - ./backend-flask:/backend-flask
   frontend-react-js:
     environment:
-      REACT_APP_BACKEND_URL: "https://4567--019c8fdf-783a-74eb-bddd-cf5aafde74a4.eu-central-1-01.gitpod.dev"
+      REACT_APP_BACKEND_URL: "https://4567--019cab17-1191-7cc0-b494-100284acabdf.eu-central-1-01.gitpod.dev"
     build: ./frontend-react-js
     ports:
       - "3000:3000"
