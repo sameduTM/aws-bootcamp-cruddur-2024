@@ -172,7 +172,9 @@ def data_create_message():
 
 
 @app.route("/api/activities/home", methods=["GET"])
+@auth_required()
 def data_home():
+    print("headers:", request.headers)
     data = HomeActivities.run()
     return data, 200
 

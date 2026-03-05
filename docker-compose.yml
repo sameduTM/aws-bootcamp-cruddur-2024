@@ -2,18 +2,18 @@ version: "3.8"
 services:
   backend-flask:
     environment:
-      FRONTEND_URL: "https://3000--019cafc1-65a0-7143-b125-799f97bc6f05.eu-central-1-01.gitpod.dev"
-      BACKEND_URL: "https://4567--019cafc1-65a0-7143-b125-799f97bc6f05.eu-central-1-01.gitpod.dev "
+      FRONTEND_URL: "https://3000--019cbdcc-6028-7c32-82c5-fed902714ec3.eu-central-1-01.gitpod.dev"
+      BACKEND_URL: "https://4567--019cbdcc-6028-7c32-82c5-fed902714ec3.eu-central-1-01.gitpod.dev "
       OTEL_SERVICE_NAME: "backend-flask"
       OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
       OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
-      AWS_XRAY_URL: "*4567--019cafc1-65a0-7143-b125-799f97bc6f05.eu-central-1-01.gitpod.dev*"
+      AWS_XRAY_URL: "*4567--019cbdcc-6028-7c32-82c5-fed902714ec3.eu-central-1-01.gitpod.dev*"
       AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
-      AWS_DEFAULT_REGION: "${AWS_DEFAULT_REGION}"
+      AWS_DEFAULT_REGION: "ca-central-1"
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
       AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
       AWS_COGNITO_USER_POOL_ID: "ca-central-1_HXjic6wv"
-      AWS_COGNITO_USER_POOL_CLIENT_ID: "eebu018drajtau04m1q3r2o8s"
+      AWS_COGNITO_USER_POOL_CLIENT_ID: "4tlq19fpupkjr2c2ecmkqgts72"
       ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
     build: ./backend-flask
     ports:
@@ -22,11 +22,11 @@ services:
       - ./backend-flask:/backend-flask
   frontend-react-js:
     environment:
-      REACT_APP_BACKEND_URL: "https://4567--019cafc1-65a0-7143-b125-799f97bc6f05.eu-central-1-01.gitpod.dev"
-      REACT_APP_AWS_PROJECT_REGION: "${AWS_DEFAULT_REGION}"
-      REACT_APP_AWS_COGNITO_REGION: "${AWS_DEFAULT_REGION}"
+      REACT_APP_BACKEND_URL: "https://4567--019cbdcc-6028-7c32-82c5-fed902714ec3.eu-central-1-01.gitpod.dev"
+      REACT_APP_AWS_PROJECT_REGION: "ca-central-1"
+      REACT_APP_AWS_COGNITO_REGION: "ca-central-1"
       REACT_APP_AWS_USER_POOLS_ID: "ca-central-1_HXjic6wve"
-      REACT_APP_CLIENT_ID: "eebu018drajtau04m1q3r2o8s"
+      REACT_APP_CLIENT_ID: "4tlq19fpupkjr2c2ecmkqgts72"
     build: ./frontend-react-js
     ports:
       - "3000:3000"

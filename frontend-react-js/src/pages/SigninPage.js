@@ -25,8 +25,6 @@ export default function SigninPage() {
         const session = await fetchAuthSession();
         const accessToken = session.tokens?.accessToken?.toString();
 
-        console.log(accessToken);
-
         localStorage.setItem("access_token", accessToken);
         window.location.href = "/";
       } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
