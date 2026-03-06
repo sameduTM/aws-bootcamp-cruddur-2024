@@ -8,7 +8,11 @@ import ActivityForm from "../components/ActivityForm";
 import ReplyForm from "../components/ReplyForm";
 
 // [TODO] Authenication
-import { getCurrentUser, fetchUserAttributes } from "aws-amplify/auth";
+import {
+  getCurrentUser,
+  fetchUserAttributes,
+  fetchAuthSession,
+} from "aws-amplify/auth";
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -21,15 +25,16 @@ export default function HomeFeedPage() {
   const loadData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
-      const token = localStorage.getItem("access_token");
+      const session = await fetchAuthSession();
+      const accessToken = session.tokens?.accessToken?.toString();
 
       const res = await fetch(backend_url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
-      console.log(res.headers)
+
       let resJson = await res.json();
 
       if (res.status === 200) {
@@ -46,10 +51,7 @@ export default function HomeFeedPage() {
 
   const checkAuth = async () => {
     try {
-      const { username } = await getCurrentUser();
       const attributes = await fetchUserAttributes();
-
-      console.log("user", username);
 
       setUser({
         display_name: attributes.name,

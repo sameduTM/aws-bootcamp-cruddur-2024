@@ -13,4 +13,4 @@ watchtower
 blinker
 rollbar
 
-flask-cognito-lib
+flask-cognito

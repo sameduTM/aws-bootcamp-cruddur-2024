@@ -39,25 +39,18 @@ import rollbar.contrib.flask
 from flask import got_request_exception
 
 # Flask AWS Cognito
-from flask import jsonify, redirect, session, url_for
-from flask_cognito_lib import CognitoAuth
-from flask_cognito_lib.decorators import (
-    auth_required,
-    cognito_login,
-    cognito_login_callback,
-    cognito_logout,
-    cognito_refresh_callback,
-)
+from flask import jsonify, redirect, session, url_for, make_response
+from flask_cognito import CognitoAuth
+from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
 
-"""# Configuring Logger to Use CloudWatch
+
+# Configuring Logger to Use CloudWatch
 LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
-LOGGER.info("test logs")
-
 
 # Honeycomb ----------
 # Initialize tracing and an exporter that can send data to Honeycomb
@@ -71,9 +64,18 @@ simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
 provider.add_span_processor(simple_processor)
 
 trace.set_tracer_provider(provider)
-tracer = trace.get_tracer(__name__)"""
+tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
+
+cogauth = CognitoAuth()
+
+# Cognito configuration -----
+app.config['COGNITO_REGION'] = "ca-central-1"
+app.config['COGNITO_USERPOOL_ID'] = "ca-central-1_HXjic6wve"
+app.config['COGNITO_APP_CLIENT_ID'] = "4tlq19fpupkjr2c2ecmkqgts72"
+
+cogauth.init_app(app)
 
 frontend = os.getenv("FRONTEND_URL")
 backend = os.getenv("BACKEND_URL")
@@ -84,18 +86,13 @@ cors = CORS(
     resources={r"/api/*": {"origins": origins}},
     allow_headers=['Content-Type', 'Authorization'],
     expose_headers=['Authorization'],
-    methods=["OPTIONS, GET, HEAD, POST"]
+    methods=["OPTIONS", "GET", "HEAD", "POST"],
+    supports_credentials=True
 )
 
-# Configuration required for CognitoAuth
-app.config["AWS_REGION"] = os.getenv("AWS_DEFAULT_REGION")
-app.config["AWS_COGNITO_USER_POOL_ID"] = os.getenv("AWS_COGNITO_USER_POOL_ID")
-app.config["AWS_COGNITO_USER_POOL_CLIENT_ID"] = os.getenv(
-    "AWS_COGNITO_USER_POOL_CLIENT_ID")
+# Ensure your SECRET_KEY is bytes for the Fernet encryption used by this lib
 
-auth = CognitoAuth(app)
-
-"""# Rollbar
+# Rollbar:- real-time error tracking & debugging tool
 rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
 with app.app_context():
     rollbar.init(rollbar_access_token, environment='production')
@@ -110,15 +107,24 @@ XRayMiddleware(app, xray_recorder)
 
 # Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()"""
+RequestsInstrumentor().instrument()
 
 
-"""@app.after_request
+@app.after_request
 def after_request(response):
     timestamp = strftime('[%Y-%b-%d %H:%M]')
     LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr,
                  request.method, request.scheme, request.full_path, response.status)
-    return response"""
+    return response
+
+
+@cogauth.identity_handler
+def lookup_cognito_user(payload):
+    """
+    This payload is the decoded JWT. 
+    Return the 'sub' (UUID) or the full user object from a database.
+    """
+    return payload.get('sub') or payload.get('username')
 
 
 @app.route('/rollbar/test')
@@ -149,7 +155,6 @@ def data_messages(handle):
         return model["errors"], 422
     else:
         return model["data"], 200
-    return
 
 
 @app.route("/api/messages", methods=["POST", "OPTIONS"])
@@ -168,13 +173,11 @@ def data_create_message():
         return model["errors"], 422
     else:
         return model["data"], 200
-    return
 
 
 @app.route("/api/activities/home", methods=["GET"])
-@auth_required()
+@cognito_auth_required
 def data_home():
-    print("headers:", request.headers)
     data = HomeActivities.run()
     return data, 200
 
