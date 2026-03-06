@@ -14,11 +14,12 @@
 	// Beware: features are not supported on all platforms and may have unintended side-effects.
 	"features": {
       "ghcr.io/devcontainers/features/docker-in-docker": {
+        "postCreateCommand": "export GITPOD_ENVIRONMENT_ID=$(gitpod environment get | awk '/Class/ {print $2}')",
         "moby": false
       },
       "ghcr.io/devcontainers/features/python:1": {},
       "ghcr.io/devcontainers/features/node:1": {
-        "postCreateCommad": "cd frontend-react-js && npm install"
+        "postCreateCommand": "cd frontend-react-js && npm install"
       },
       "ghcr.io/devcontainers/features/aws-cli:1": {},
       "ghcr.io/itsmechlark/features/postgresql:1": {}
