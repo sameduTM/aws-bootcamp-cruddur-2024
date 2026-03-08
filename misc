@@ -1,0 +1,4 @@
+export CONNECTION_URL="postgresql://postgres:password@127.0.0.1:5432/cruddur"
+export PROD_CONNECTION_URL="postgresql://cruddurroot:goodPassword123@cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com:5432/cruddur"
+
+gitpod user secret create --name CONNECTION_URL --value $CONNECTION_URL--env-var
