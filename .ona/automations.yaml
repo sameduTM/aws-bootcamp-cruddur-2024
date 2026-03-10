@@ -5,13 +5,25 @@ tasks:
       export GITPOD_ENV_ID=$(gitpod whoami | grep "User ID:" | awk '{print $3}')
       echo "export GITPOD_ENV_ID" >> ~/.bashrc
       CONNECTION_URL='postgresql://postgres:password@localhost:5432/cruddur'"
-      export CONNECTION_URL >> ~/.bashrc
+      echo "export $CONNECTION_URL" >> ~/.bashrc
+      GITPOD_IP=$(curl ifconfig.me)
+      echo "export $GITPOD_IP" >> ~/.bashrc
+      export DB_SG_ID="sg-09aecc0b76a75ec38"
+      echo "export $DB_SG_ID" >> ~/.bashrc
+      export DB_SG_RULE_ID="sgr-0974283630148b03f"
+      echo "export $DB_SG_RULE_ID" >> ~/.bashrc
     triggeredBy:
       - postDevcontainerStart
-  Install:
+  install:
     name: Install npm dependencies
     command: |
       cd frontend-react-js
       npm install
     triggeredBy:
       - postDevcontainerStart
+  startup-commands:
+    name: Commands to run at start-up
+    command: "cd backend-flask && ./bin/rds-update-sg-rule"
+    triggeredBy:
+      - postDevcontainerStart
+

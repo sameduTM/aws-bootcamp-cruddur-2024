@@ -1,5 +1,12 @@
 export CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur"
-export PROD_CONNECTION_URL="postgresql://cruddurroot:goodPassword123@cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com:5432/cruddur"
+export PROD_CONNECTION_URL="postgresql://root:goodPassword123@cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com:5432/cruddur"
 
 gitpod user secret create --name CONNECTION_URL --value $CONNECTION_URL --env-var
 gitpod user secret create --name PROD_CONNECTION_URL --value $PROD_CONNECTION_URL --env-var
+
+export DB_SG_ID="sg-09aecc0b76a75ec38"
+export DB_SG_RULE_ID="sgr-0974283630148b03f"
+
+aws ec2 modify-security-group-rules \
+    --group-id $DB_SG_ID \
+    --security-group-rules "SecurityGroupRuleId=$DB_SG_RULE_ID,SecurityGroupRule={IpProtocol=tcp,FromPort=5432,ToPort=5432,CidrIpv4=$GITPOD_IP/32, Description=GITPOD}"
