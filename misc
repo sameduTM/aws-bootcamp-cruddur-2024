@@ -7,6 +7,17 @@ gitpod user secret create --name PROD_CONNECTION_URL --value $PROD_CONNECTION_UR
 export DB_SG_ID="sg-09aecc0b76a75ec38"
 export DB_SG_RULE_ID="sgr-0974283630148b03f"
 
+export PG_HOSTNAME='cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com'
+export PG_DATABASE='cruddur'
+export PG_USERNAME='root'
+export PG_PASSWORD='goodPassword123'
+
+gitpod project secret create 019cd041-28b3-7653-8dc9-3201f3368969 --name PG_HOSTNAME --value $PG_HOSTNAME
+gitpod project secret create 019cd041-28b3-7653-8dc9-3201f3368969 --name PG_DATABASE --value $PG_DATABASE
+gitpod project secret create 019cd041-28b3-7653-8dc9-3201f3368969 --name PG_USERNAME --value $PG_USERNAME
+gitpod project secret create 019cd041-28b3-7653-8dc9-3201f3368969 --name PG_PASSWORD --value $PG_PASSWORD
+
+
 aws ec2 modify-security-group-rules \
     --group-id $DB_SG_ID \
-    --security-group-rules "SecurityGroupRuleId=$DB_SG_RULE_ID,SecurityGroupRule={IpProtocol=tcp,FromPort=5432,ToPort=5432,CidrIpv4=$GITPOD_IP/32, Description=GITPOD}"
+    --security-group-rules "SecurityGroupRuleId=$DB_SG_RULE_ID,SecurityGroupRule={IpProtocol=tcp,FromPort=5432,ToPort=5432,CidrIpv4=$GITPOD_IP/32,Description=GITPOD}"

@@ -17,7 +17,7 @@ services:
       ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
       FLASK_SECRET_KEY: "fc7a4e6fe095329ea84e82f1e33ad6b46175523481049bc0f9"
       COGNITO_REGION: "ca-central-1"
-      CONNECTION_URL: "${PROD_CONNECTION_URL}"
+      CONNECTION_URL: "postgresql://root:goodPassword123@cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com:5432/cruddur"
     build: ./backend-flask
     ports:
       - "4567:4567"

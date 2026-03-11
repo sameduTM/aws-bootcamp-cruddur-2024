@@ -1,19 +1,39 @@
 tasks:
   set-env-id:
-    name: Get and Set env vars
+    name: Set Environment Variables
     command: |
+      # Persistent IDs
       export GITPOD_ENV_ID=$(gitpod whoami | grep "User ID:" | awk '{print $3}')
-      echo "export GITPOD_ENV_ID" >> ~/.bashrc
-      CONNECTION_URL='postgresql://postgres:password@localhost:5432/cruddur'"
-      echo "export $CONNECTION_URL" >> ~/.bashrc
-      GITPOD_IP=$(curl ifconfig.me)
-      echo "export $GITPOD_IP" >> ~/.bashrc
+
+      # Networking
+      export GITPOD_IP=$(curl -s ifconfig.me)
       export DB_SG_ID="sg-09aecc0b76a75ec38"
-      echo "export $DB_SG_ID" >> ~/.bashrc
       export DB_SG_RULE_ID="sgr-0974283630148b03f"
-      echo "export $DB_SG_RULE_ID" >> ~/.bashrc
+
+      # RDS Credentials
+      export PG_HOSTNAME='cruddur-db-instance.cxaqmw4euj66.ca-central-1.rds.amazonaws.com'
+      export PG_DATABASE='cruddur'
+      export PG_USERNAME='root'
+      export PG_PASSWORD='goodPassword123'
+
+      # Construct Connection URL dynamically
+      export CONNECTION_URL="postgresql://$PG_USERNAME:$PG_PASSWORD@$PG_HOSTNAME:5432/$PG_DATABASE"
+
+      # Persist all to bashrc for subshells
+      cat <<EOF >> ~/.bashrc
+      export GITPOD_ENV_ID=$GITPOD_ENV_ID
+      export GITPOD_IP=$GITPOD_IP
+      export DB_SG_ID=$DB_SG_ID
+      export DB_SG_RULE_ID=$DB_SG_RULE_ID
+      export PG_HOSTNAME=$PG_HOSTNAME
+      export PG_DATABASE=$PG_DATABASE
+      export PG_USERNAME=$PG_USERNAME
+      export PG_PASSWORD=$PG_PASSWORD
+      export CONNECTION_URL=$CONNECTION_URL
+      EOF
     triggeredBy:
       - postDevcontainerStart
+
   install:
     name: Install npm dependencies
     command: |
@@ -21,9 +41,10 @@ tasks:
       npm install
     triggeredBy:
       - postDevcontainerStart
-  startup-commands:
-    name: Commands to run at start-up
-    command: "cd backend-flask && ./bin/rds-update-sg-rule"
-    triggeredBy:
-      - postDevcontainerStart
 
+  startup-commands:
+    name: Update RDS Security Group
+    command: |
+      cd backend-flask
+      chmod +x ./bin/rds-update-sg-rule
+      ./bin/rds-update-sg-rule
