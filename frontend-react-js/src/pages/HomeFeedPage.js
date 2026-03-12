@@ -23,11 +23,14 @@ export default function HomeFeedPage() {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
       const session = await fetchAuthSession();
       const accessToken = session.tokens?.accessToken?.toString();
+      
+      const user_handle = session.tokens.idToken.payload.preferred_username
 
       const res = await fetch(backend_url, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          Username: user_handle,
         },
       });
 

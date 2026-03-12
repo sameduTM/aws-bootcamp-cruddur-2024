@@ -74,6 +74,7 @@ cogauth = CognitoAuth()
 app.config['COGNITO_REGION'] = "ca-central-1"
 app.config['COGNITO_USERPOOL_ID'] = "ca-central-1_HXjic6wve"
 app.config['COGNITO_APP_CLIENT_ID'] = "4tlq19fpupkjr2c2ecmkqgts72"
+app.config['SECRET_KEY'] = "0x13847de7d7dde9186556908efaa8658d"
 
 cogauth.init_app(app)
 
@@ -84,7 +85,7 @@ origins = [frontend, backend]
 cors = CORS(
     app,
     resources={r"/api/*": {"origins": origins}},
-    allow_headers=['Content-Type', 'Authorization'],
+    allow_headers=['Content-Type', 'Authorization', 'Username'],
     expose_headers=['Authorization'],
     methods=["OPTIONS", "GET", "HEAD", "POST"],
     supports_credentials=True
@@ -178,6 +179,7 @@ def data_create_message():
 @app.route("/api/activities/home", methods=["GET"])
 # @cognito_auth_required
 def data_home():
+    session['Username'] = request.headers.get('Username')
     data = HomeActivities.run()
     return data, 200
 
@@ -211,7 +213,7 @@ def data_search():
 @app.route("/api/activities", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_activities():
-    user_handle = "andrewbrown"
+    user_handle = request.headers.get('Username')
     message = request.json["message"]
     ttl = request.json["ttl"]
     model = CreateActivity.run(message, user_handle, ttl)

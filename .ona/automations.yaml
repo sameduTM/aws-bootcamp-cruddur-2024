@@ -21,18 +21,19 @@ tasks:
 
       # Persist all to bashrc for subshells
       cat <<EOF >> ~/.bashrc
-      export GITPOD_ENV_ID=$GITPOD_ENV_ID
-      export GITPOD_IP=$GITPOD_IP
-      export DB_SG_ID=$DB_SG_ID
-      export DB_SG_RULE_ID=$DB_SG_RULE_ID
-      export PG_HOSTNAME=$PG_HOSTNAME
-      export PG_DATABASE=$PG_DATABASE
-      export PG_USERNAME=$PG_USERNAME
-      export PG_PASSWORD=$PG_PASSWORD
-      export CONNECTION_URL=$CONNECTION_URL
+      export GITPOD_ENV_ID="$GITPOD_ENV_ID"
+      export GITPOD_IP="$GITPOD_IP"
+      export DB_SG_ID="$DB_SG_ID"
+      export DB_SG_RULE_ID="$DB_SG_RULE_ID"
+      export PG_HOSTNAME="$PG_HOSTNAME"
+      export PG_DATABASE="$PG_DATABASE"
+      export PG_USERNAME="$PG_USERNAME"
+      export PG_PASSWORD="$PG_PASSWORD"
+      export CONNECTION_URL="$CONNECTION_URL"
+      source ~/.bashrc
       EOF
     triggeredBy:
-      - postDevcontainerStart
+      - postEnvironmentStart
 
   install:
     name: Install npm dependencies
@@ -40,7 +41,7 @@ tasks:
       cd frontend-react-js
       npm install
     triggeredBy:
-      - postDevcontainerStart
+      - postEnvironmentStart
 
   startup-commands:
     name: Update RDS Security Group
