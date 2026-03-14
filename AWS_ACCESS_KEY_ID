@@ -1,0 +1,14 @@
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+ROLLBAR_ACCESS_TOKEN
+HONEYCOMB_API_KEY
+
+
+
+aws ec2 modify-security-group-rules \
+    --group-id $DB_SG_ID \
+    --security-group-rules "SecurityGroupRuleId=$DB_SG_RULE_ID,SecurityGroupRule={IpProtocol=tcp,FromPort=5432,ToPort=5432,CidrIpv4=$GITPOD_IP/32, Description=GITPOD}"
+
+aws --region $AWS_DEFAULT_REGION cognito-idp list-users --user-pool-id "ca-central-1_HXjic6wve" --output json > cognito-users.json
+
+CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur"

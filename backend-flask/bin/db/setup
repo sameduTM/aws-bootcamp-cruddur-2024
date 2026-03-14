@@ -9,10 +9,10 @@ printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 bin_path="$(realpath .)/bin"
 
 # shellcheck source=/dev/null
-source "$bin_path/db-drop"
+source "$bin_path/db/drop"
 # shellcheck source=/dev/null
-source "$bin_path/db-create"
+source "$bin_path/db/create"
 # shellcheck source=/dev/null
-source "$bin_path/db-schema-load"
+source "$bin_path/db/schema-load"
 # shellcheck source=/dev/null
-source "$bin_path/db-seed"
+source "$bin_path/db/seed"

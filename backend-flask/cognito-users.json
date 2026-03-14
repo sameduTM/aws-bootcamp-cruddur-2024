@@ -1,0 +1,62 @@
+{
+    "Users": [
+        {
+            "Username": "7c3df538-b091-70b9-6015-49df25dbf478",
+            "Attributes": [
+                {
+                    "Name": "email",
+                    "Value": "wekesa884@gmail.com"
+                },
+                {
+                    "Name": "email_verified",
+                    "Value": "true"
+                },
+                {
+                    "Name": "preferred_username",
+                    "Value": "wekesa884"
+                },
+                {
+                    "Name": "name",
+                    "Value": "Ken Wekesa"
+                },
+                {
+                    "Name": "sub",
+                    "Value": "7c3df538-b091-70b9-6015-49df25dbf478"
+                }
+            ],
+            "UserCreateDate": "2026-03-11T05:54:48.316000+00:00",
+            "UserLastModifiedDate": "2026-03-11T05:55:05.930000+00:00",
+            "Enabled": true,
+            "UserStatus": "CONFIRMED"
+        },
+        {
+            "Username": "bc9dd528-e0d1-70a7-5236-4886f463b51d",
+            "Attributes": [
+                {
+                    "Name": "email",
+                    "Value": "wanyamak20@gmail.com"
+                },
+                {
+                    "Name": "email_verified",
+                    "Value": "true"
+                },
+                {
+                    "Name": "preferred_username",
+                    "Value": "wanyamak20"
+                },
+                {
+                    "Name": "name",
+                    "Value": "Ken Wanyama"
+                },
+                {
+                    "Name": "sub",
+                    "Value": "bc9dd528-e0d1-70a7-5236-4886f463b51d"
+                }
+            ],
+            "UserCreateDate": "2026-03-11T06:08:03.789000+00:00",
+            "UserLastModifiedDate": "2026-03-11T06:09:08.216000+00:00",
+            "Enabled": true,
+            "UserStatus": "CONFIRMED"
+        }
+    ]
+}

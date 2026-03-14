@@ -34,13 +34,18 @@ class CreateActivity:
             model["errors"] = ["message_blank"]
         elif len(message) > 280:
             model["errors"] = ["message_exceed_max_chars"]
-
         if model["errors"]:
             model["data"] = {"handle": user_handle, "message": message}
         else:
+            print("Model:", model)
+            with pool.connection() as conn:
+                cur = conn.cursor()
+                sql = "SELECT display_name FROM users WHERE handle=%s"
+                display_name = cur.execute(sql, user_handle)
+                
             model["data"] = {
                 "uuid": uuid.uuid4(),
-                "display_name": "Andrew Brown",
+                "display_name": display_name | "Andrew Brown",
                 "handle": user_handle,
                 "message": message,
                 "created_at": now.isoformat(),
