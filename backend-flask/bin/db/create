@@ -7,4 +7,4 @@ printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
 NO_DB_CONNECTION_URL=$(sed 's/\/cruddur//g' <<<"$CONNECTTION_URL")
 
-psql "$NO_DB_CONNECTION_URL" -c "create database cruddur;"
+psql "$NO_DB_CONNECTION_URL" -c "CREATE DATABASE IF NOT EXIST cruddur;"

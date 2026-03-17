@@ -6,7 +6,7 @@ LABEL="db-sessions"
 printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
 if [ "$1" == "prod" ]; then
-    echo "using production"
+    echo "Connecting to production"
     URL=$PROD_CONNECTION_URL
 else
     URL=$CONNECTION_URL

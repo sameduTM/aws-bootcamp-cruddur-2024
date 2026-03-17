@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime, timedelta, timezone
-from flask import request
-from lib.db import pool
+from lib.db import db
 
 
 class CreateActivity:
@@ -38,14 +37,13 @@ class CreateActivity:
             model["data"] = {"handle": user_handle, "message": message}
         else:
             print("Model:", model)
-            with pool.connection() as conn:
-                cur = conn.cursor()
-                sql = "SELECT display_name FROM users WHERE handle=%s"
-                display_name = cur.execute(sql, user_handle)
-                
+            sql = "SELECT display_name FROM users WHERE handle=%(handle)s"
+            display_name = db.query_value(sql, params={
+                'handle': model['data']['handle']
+            })
             model["data"] = {
                 "uuid": uuid.uuid4(),
-                "display_name": display_name | "Andrew Brown",
+                "display_name": display_name,
                 "handle": user_handle,
                 "message": message,
                 "created_at": now.isoformat(),
@@ -65,7 +63,8 @@ class CreateActivity:
             %s
           )
           """
-        with pool.connection() as conn:
-            cur = conn.cursor()
-            cur.execute(sql, (user_handle, message, expires_at))
-            conn.commit()
+        db.query_commit(sql, params={
+            'handle': user_handle,
+            'message': message,
+            'expires_at': expires_at
+        })
