@@ -13,6 +13,7 @@ from services.message_groups import *
 from services.messages import *
 from services.create_message import *
 from services.show_activity import *
+from services.users_short import *
 
 # Honeycomb ---------
 from opentelemetry import trace
@@ -38,19 +39,20 @@ import rollbar
 import rollbar.contrib.flask
 from flask import got_request_exception
 
-# Flask AWS Cognito
-from flask import jsonify, redirect, session, url_for, make_response
-from flask_cognito import CognitoAuth
-from flask_cognito import cognito_auth_required, current_user, current_cognito_jwt
+# Flask Cognito Token Verify
+from jwt.exceptions import JWTException
+from lib.cognito_jwt_token import TokenVerify
 
 
+"""
 # Configuring Logger to Use CloudWatch
 LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler(log_group='cruddur')
+cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
+"""
 
 # Honeycomb ----------
 # Initialize tracing and an exporter that can send data to Honeycomb
@@ -68,15 +70,10 @@ tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
 
-cogauth = CognitoAuth()
 
-# Cognito configuration -----
-app.config['COGNITO_REGION'] = "ca-central-1"
-app.config['COGNITO_USERPOOL_ID'] = "ca-central-1_HXjic6wve"
-app.config['COGNITO_APP_CLIENT_ID'] = "4tlq19fpupkjr2c2ecmkqgts72"
-app.config['SECRET_KEY'] = "0x13847de7d7dde9186556908efaa8658d"
+# Ensure your SECRET_KEY is bytes for the Fernet encryption used by this lib
+# app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
 
-cogauth.init_app(app)
 
 frontend = os.getenv("FRONTEND_URL")
 backend = os.getenv("BACKEND_URL")
@@ -85,25 +82,22 @@ origins = [frontend, backend]
 cors = CORS(
     app,
     resources={r"/api/*": {"origins": origins}},
-    allow_headers=['Content-Type', 'Authorization'],
-    expose_headers=['Authorization'],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
     methods=["OPTIONS", "GET", "HEAD", "POST"],
-    supports_credentials=True
+    supports_credentials=True,
 )
 
-# Ensure your SECRET_KEY is bytes for the Fernet encryption used by this lib
-
 # Rollbar:- real-time error tracking & debugging tool
-rollbar_access_token = os.getenv('ROLLBAR_ACCESS_TOKEN')
+rollbar_access_token = os.getenv("ROLLBAR_ACCESS_TOKEN")
 with app.app_context():
-    rollbar.init(rollbar_access_token, environment='production')
+    rollbar.init(rollbar_access_token, environment="production")
     # send exceptions from `app` to rollbar, using flask's signal system.
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
 # X-RAY -------------
 xray_url = os.getenv("AWS_XRAY_URL")
-xray_recorder.configure(service='backend-flask', dynamic_naming=xray_url)
+xray_recorder.configure(service="backend-flask", dynamic_naming=xray_url)
 XRayMiddleware(app, xray_recorder)
 
 # Initialize automatic instrumentation with Flask
@@ -111,82 +105,115 @@ FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
 
 
-@app.after_request
-def after_request(response):
-    timestamp = strftime('[%Y-%b-%d %H:%M]')
-    LOGGER.error('%s %s %s %s %s %s', timestamp, request.remote_addr,
-                 request.method, request.scheme, request.full_path, response.status)
-    return response
-
-
-@cogauth.identity_handler
-def lookup_cognito_user(payload):
-    """
-    This payload is the decoded JWT. 
-    Return the 'sub' (UUID) or the full user object from a database.
-    """
-    return payload.get('sub') or payload.get('username')
-
-
-@app.route('/rollbar/test')
+@app.route("/rollbar/test")
 def rollbar_test():
-    rollbar.report_message('Hello World!', 'warning')
-    return "Hello Worldk!"
+    rollbar.report_message("Hello World!", "warning")
+    return "Hello World!"
 
 
 @app.route("/api/message_groups", methods=["GET"])
 def data_message_groups():
-    user_handle = "andrewbrown"
-    model = MessageGroups.run(user_handle=user_handle)
-    if model["errors"] is not None:
-        return model["errors"], 422
-    else:
-        return model["data"], 200
+    access_token = request.headers.get("Authorization")
+    try:
+        claims = TokenVerify.cognito_jwt_verify(access_token)
+        app.logger.debug("authenticated")
+        app.logger.debug(claims)
+
+        cognito_user_id = claims.get("sub")
+        model = MessageGroups.run(cognito_user_id=cognito_user_id)
+        if model["errors"] is not None:
+            return model["errors"], 422
+        else:
+            return model["data"], 200
+    except Exception as e:
+        app.logger.debug("un-authenticated:", e)
+        return {}, 401
 
 
-@app.route("/api/messages/@<string:handle>", methods=["GET"])
-def data_messages(handle):
-    user_sender_handle = "andrewbrown"
-    user_receiver_handle = request.args.get("user_reciever_handle")
+@app.route("/api/messages/<string:message_group_uuid>", methods=["GET"])
+def data_messages(message_group_uuid):
+    access_token = request.headers.get("Authorization")
+    try:
+        claims = TokenVerify.cognito_jwt_verify(access_token)
+        app.logger.debug("authenticated")
+        app.logger.debug(claims)
 
-    model = Messages.run(
-        user_sender_handle=user_sender_handle, user_receiver_handle=user_receiver_handle
-    )
-    if model["errors"] is not None:
-        return model["errors"], 422
-    else:
-        return model["data"], 200
+        cognito_user_id = claims.get("sub")
+        model = Messages.run(
+            cognito_user_id=cognito_user_id, message_group_uuid=message_group_uuid
+        )
+        if model["errors"] is not None:
+            return model["errors"], 422
+        else:
+            return model["data"], 200
+
+    except JWTException as e:
+        app.logger.debug("un-authenticated")
+        app.logger.debug(e)
+        return {}, 401
 
 
 @app.route("/api/messages", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_create_message():
-    user_sender_handle = "andrewbrown"
-    user_receiver_handle = request.json["user_receiver_handle"]
-    message = request.json["message"]
+    message = request.json.get("message")
+    access_token = request.headers.get("Authorization")
+    try:
+        claims = TokenVerify.cognito_jwt_verify(access_token)
+        app.logger.debug("authenticated")
 
-    model = CreateMessage.run(
-        message=message,
-        user_sender_handle=user_sender_handle,
-        user_receiver_handle=user_receiver_handle,
-    )
-    if model["errors"] is not None:
-        return model["errors"], 422
-    else:
-        return model["data"], 200
+        cognito_user_id = claims.get("sub")
+        message_group_uuid = request.json.get("message_group_uuid", None)
+        user_receiver_handle = request.json.get("user_receiver_handle", None)
+        print("message:", message, "message_group_uuid:", message_group_uuid, "user_receiver_handle:", user_receiver_handle)
+
+        if message_group_uuid == None:
+            # create for the first time
+            model = CreateMessage.run(
+                mode="create",
+                message=message,
+                cognito_user_id=cognito_user_id,
+                user_receiver_handle=user_receiver_handle,
+            )
+        else:
+            model = CreateMessage.run(
+                mode="update",
+                message=message,
+                message_group_uuid=message_group_uuid,
+                cognito_user_id=cognito_user_id,
+            )
+        if model["errors"] is not None:
+            return model["errors"], 422
+        else:
+            return model["data"], 200
+
+    except Exception as e:
+        app.logger.debug("un-authenticated")
+        return {}, 401
 
 
-@app.route("/api/activities/home", methods=["GET"])
-# @cognito_auth_required
+@app.route("/api/activities/home", methods=["GET", "POST"])
 def data_home():
-    session['Username'] = request.headers.get('Username')
-    data = HomeActivities.run()
-    return data, 200
+    access_token = request.headers.get("Authorization")
+    try:
+        TokenVerify.cognito_jwt_verify(access_token)
+        app.logger.debug("authenticated")
+        data = HomeActivities.run()
+        return data, 200
+    except Exception as e:
+        app.logger.debug("un-authenticated")
+        return {}, 401
 
 
 @app.route("/api/activities/notifications", methods=["GET"])
 def data_notifications():
     data = NotificationsActivities.run()
+    return data, 200
+
+
+@app.route("/api/users/@<string:handle>/short", methods=["GET"])
+def data_users_short(handle):
+    data = UsersShort.run(handle)
     return data, 200
 
 
@@ -213,7 +240,7 @@ def data_search():
 @app.route("/api/activities", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_activities():
-    user_handle = request.headers.get('Username')
+    user_handle = request.headers.get("Username")
     message = request.json["message"]
     ttl = request.json["ttl"]
     model = CreateActivity.run(message, user_handle, ttl)

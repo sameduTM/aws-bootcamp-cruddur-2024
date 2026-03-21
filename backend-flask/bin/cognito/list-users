@@ -14,7 +14,7 @@ params = {
 response = client.list_users(**params)
 users = response['Users']
 
-# print(json.dumps(users, sort_keys=True, indent=2 ,default=str))
+print(json.dumps(users, sort_keys=True, indent=2 ,default=str))
 
 dict_users = {}
 

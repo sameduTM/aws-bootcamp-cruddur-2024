@@ -4,7 +4,7 @@ import { ReactComponent as Logo } from "../components/svg/logo.svg";
 import { Link } from "react-router-dom";
 
 // [TODO] Authenication
-import { signIn } from "aws-amplify/auth";
+import { fetchAuthSession, signIn } from "aws-amplify/auth";
 
 export default function SigninPage() {
   const [email, setEmail] = React.useState("");
@@ -22,6 +22,9 @@ export default function SigninPage() {
       });
 
       if (isSignedIn) {
+        const jwtToken = (await fetchAuthSession()).tokens.accessToken.toString();
+
+        localStorage.setItem("access_token", jwtToken);
         window.location.href = "/";
       } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
         window.location.href = "/confirm";

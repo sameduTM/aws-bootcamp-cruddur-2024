@@ -18,12 +18,14 @@ services:
       FLASK_SECRET_KEY: "fc7a4e6fe095329ea84e82f1e33ad6b46175523481049bc0f9"
       COGNITO_REGION: "ca-central-1"
       CONNECTION_URL: "postgresql://postgres:password@db:5432/cruddur"
-      AWS_ENDPOINT_URL: "http://ddb:8000"
+      AWS_ENDPOINT_URL: "http://ddb:8000/"
     build: ./backend-flask
     ports:
       - "4567:4567"
     depends_on:
       db:
+        condition: service_healthy
+      ddb:
         condition: service_healthy
     volumes:
       - ./backend-flask:/backend-flask
@@ -62,11 +64,21 @@ services:
     command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
     image: "amazon/dynamodb-local:latest"
     container_name: ddb
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'if [ "$(curl -s -o /dev/null -I -w ''%{http_code}'' http://localhost:8000)" == "400" ]; then exit 0; else exit 1; fi',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     ports:
       - "8000:8000"
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
+
   xray-daemon:
     image: "amazon/aws-xray-daemon"
     environment:
