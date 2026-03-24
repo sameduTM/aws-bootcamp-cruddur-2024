@@ -199,6 +199,7 @@ def data_home():
         TokenVerify.cognito_jwt_verify(access_token)
         app.logger.debug("authenticated")
         data = HomeActivities.run()
+        print(data)
         return data, 200
     except Exception as e:
         app.logger.debug("un-authenticated")

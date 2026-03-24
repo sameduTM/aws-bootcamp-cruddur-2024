@@ -18,7 +18,7 @@ export default function HomeFeedPage() {
 
   const loadData = async () => {
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;      
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
 
       const res = await fetch(backend_url, {
         method: "GET",
@@ -40,7 +40,6 @@ export default function HomeFeedPage() {
   };
 
   // check if we are authenicated
-
 
   // check when the page loads if we are authenicated
   React.useEffect(() => {
