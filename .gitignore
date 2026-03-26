@@ -1,4 +1,4 @@
 core
 .env
 docker/**/*
-frontenc-react-js/build/*
+frontend-react-js/build/*
