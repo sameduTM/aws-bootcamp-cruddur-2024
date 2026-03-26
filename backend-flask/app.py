@@ -105,10 +105,15 @@ FlaskInstrumentor().instrument_app(app)
 RequestsInstrumentor().instrument()
 
 
-@app.route("/rollbar/test")
+@app.route('/api/health-check')
+def health_check():
+    return {'success': True}, 200
+
+
+"""@app.route("/rollbar/test")
 def rollbar_test():
     rollbar.report_message("Hello World!", "warning")
-    return "Hello World!"
+    return "Hello World!"""
 
 
 @app.route("/api/message_groups", methods=["GET"])
@@ -165,7 +170,8 @@ def data_create_message():
         cognito_user_id = claims.get("sub")
         message_group_uuid = request.json.get("message_group_uuid", None)
         user_receiver_handle = request.json.get("user_receiver_handle", None)
-        print("message:", message, "message_group_uuid:", message_group_uuid, "user_receiver_handle:", user_receiver_handle)
+        print("message:", message, "message_group_uuid:",
+              message_group_uuid, "user_receiver_handle:", user_receiver_handle)
 
         if message_group_uuid == None:
             # create for the first time

@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM 136140697286.dkr.ecr.ca-central-1.amazonaws.com/cruddur-python:3.10-slim-buster
 
 # create and set /backend-flask folder as working directory
 WORKDIR /backend-flask
@@ -15,6 +15,7 @@ COPY . .
 # Set environment variables
 ENV FLASK_ENV=development
 ENV PORT=4567
+
 
 EXPOSE ${PORT}
 
