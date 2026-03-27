@@ -39,8 +39,6 @@ export default function HomeFeedPage() {
     }
   };
 
-  // check if we are authenicated
-
   // check when the page loads if we are authenicated
   React.useEffect(() => {
     //prevents double call
