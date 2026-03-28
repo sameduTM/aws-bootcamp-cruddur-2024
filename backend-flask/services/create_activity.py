@@ -25,7 +25,6 @@ class CreateActivity:
             ttl_offset = timedelta(hours=1)
         else:
             model["errors"] = ["ttl_blank"]
-
         if user_handle == None or len(user_handle) < 1:
             model["errors"] = ["user_handle_blank"]
 
@@ -36,35 +35,22 @@ class CreateActivity:
         if model["errors"]:
             model["data"] = {"handle": user_handle, "message": message}
         else:
-            print("Model:", model)
-            sql = "SELECT display_name FROM users WHERE handle=%(handle)s"
-            display_name = db.query_value(sql, params={
-                'handle': model['data']['handle']
-            })
-            model["data"] = {
-                "uuid": uuid.uuid4(),
-                "display_name": display_name,
-                "handle": user_handle,
-                "message": message,
-                "created_at": now.isoformat(),
-                "expires_at": (now + ttl_offset).isoformat(),
-            }
-            CreateActivity.create_activity(
-                user_handle, message, model["data"]["expires_at"]
-            )
+            expires_at = (now + ttl_offset)
+            uuid = CreateActivity.create_activity(
+                user_handle, message, expires_at)
+            object_json = CreateActivity.query_object_activity(uuid)
+            model['data'] = object_json
         return model
 
     def create_activity(user_handle, message, expires_at):
-        sql = """
-            INSERT INTO activities (user_uuid, message, expires_at) 
-            VALUES (
-            (SELECT uuid FROM users WHERE handle=%s),
-            %s,
-            %s
-          )
-          """
-        db.query_commit(sql, params={
+        sql = db.template('activities', 'create')
+        uuid = db.query_commit(sql, {
             'handle': user_handle,
             'message': message,
             'expires_at': expires_at
         })
+        return uuid
+
+    def query_object_activity(uuid):
+        sql = db.template('activities', 'object')
+        return db.query_object_json(sql, {'uuid': uuid})

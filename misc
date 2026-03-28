@@ -41,7 +41,7 @@ aws ec2 describe-subnets \
 cruddur-alb-887641438.ca-central-1.elb.amazonaws.com
 
 docker build \
---build-arg REACT_APP_BACKEND_URL="http://cruddur-alb-887641438.ca-central-1.elb.amazonaws.com:4567" \
+--build-arg REACT_APP_BACKEND_URL="https://api.codeken.me" \
 --build-arg REACT_APP_AWS_PROJECT_REGION="$AWS_DEFAULT_REGION" \
 --build-arg REACT_APP_AWS_COGNITO_REGION="$AWS_DEFAULT_REGION" \
 --build-arg REACT_APP_AWS_USER_POOLS_ID="ca-central-1_HXjic6wve" \

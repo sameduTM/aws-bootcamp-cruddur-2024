@@ -95,14 +95,14 @@ with app.app_context():
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
-# X-RAY -------------
+"""# X-RAY -------------
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service="backend-flask", dynamic_naming=xray_url)
 XRayMiddleware(app, xray_recorder)
 
 # Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
+RequestsInstrumentor().instrument()"""
 
 
 @app.route('/api/health-check')
@@ -250,7 +250,9 @@ def data_activities():
     user_handle = request.headers.get("Username")
     message = request.json["message"]
     ttl = request.json["ttl"]
+
     model = CreateActivity.run(message, user_handle, ttl)
+
     if model["errors"] is not None:
         return model["errors"], 422
     else:
