@@ -13,10 +13,15 @@ RUN pip3 install -r requirements.txt
 COPY . .
 
 # Set environment variables
-ENV FLASK_ENV=development
+ENV FLASK_ENV=production
 ENV PORT=4567
 
 EXPOSE ${PORT}
 
 # python3 -m flask run --host=0.0.0.0 --port=4567
-CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=4567", "--debug"]
+CMD ["python3", "-m", "flask", "run", \
+    "--host=0.0.0.0", \
+    "--port=4567", \
+    "--debug", \
+    "--no-debugger", \
+    "--no-reload"]

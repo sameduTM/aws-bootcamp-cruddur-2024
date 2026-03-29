@@ -1,4 +1,6 @@
 {
     "postman.settings.dotenv-detection-notification-visibility": false,
-    "python.terminal.useEnvFile": true
+    "python.terminal.useEnvFile": true,
+    "editor.fontFamily": "'Fira Code', 'Cascadia Code', monospace",
+    "editor.fontLigatures": true
 }
