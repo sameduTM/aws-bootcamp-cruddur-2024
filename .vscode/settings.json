@@ -2,5 +2,12 @@
     "postman.settings.dotenv-detection-notification-visibility": false,
     "python.terminal.useEnvFile": true,
     "editor.fontFamily": "'Fira Code', 'Cascadia Code', monospace",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "python-envs.pythonProjects": [
+        {
+            "path": "backend-flask",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
 }

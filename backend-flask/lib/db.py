@@ -4,6 +4,7 @@ import os
 import re
 import sys
 
+sys.path.insert(1, '../backend-flask/lib')
 
 class Db:
     def __init__(self):

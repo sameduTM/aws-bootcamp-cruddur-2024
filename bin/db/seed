@@ -1,13 +1,15 @@
 #!/usr/bin/bash
+set -e
+
+source .env
 
 CYAN=$'\033[1;36m'
 NO_COLOR=$'\033[0m'
-LABEL="db-schema-load"
+LABEL="db-seed"
 printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
-printf "%s\n" "$(curl ifconfig.me -s)"
-
-schema_path=$(realpath .)/db/schema.sql
+seed_path=$(realpath .)/backend-flask/bin/db/seed.sql
+echo $seed_path
 
 if [ "$1" == "prod" ]; then
     echo "Connecting to production..."
@@ -18,4 +20,4 @@ fi
 
 echo "$CON_URL"
 
-psql "$CON_URL" cruddur < "$schema_path"
+# psql "$CON_URL" cruddur < "$seed_path"

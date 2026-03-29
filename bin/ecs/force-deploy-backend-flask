@@ -1,5 +1,4 @@
 #!/usr/bin/bash
-
 set -e
 
 TASK_DEFINITION_FAMILY="backend-flask"
