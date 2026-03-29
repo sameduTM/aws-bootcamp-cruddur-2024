@@ -3,7 +3,7 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { ReactComponent as Logo } from "../components/svg/logo.svg";
 
-// [TODO] Authenication
+// Authenication
 import { resendSignUpCode, confirmSignUp } from "aws-amplify/auth";
 
 export default function ConfirmationPage() {

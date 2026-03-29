@@ -2,11 +2,11 @@ import './MessageGroupPage.css';
 import React from "react";
 import { useParams } from 'react-router-dom';
 
-import DesktopNavigation  from '../components/DesktopNavigation';
+import DesktopNavigation from '../components/DesktopNavigation';
 import MessageGroupFeed from '../components/MessageGroupFeed';
 import MessagesFeed from '../components/MessageFeed';
 import MessagesForm from '../components/MessageForm';
-import checkAuth from '../components/lib/checkAuth';
+import { checkAuth, getAccessToken } from '../components/lib/checkAuth';
 
 
 export default function MessageGroupPage() {
@@ -26,7 +26,7 @@ export default function MessageGroupPage() {
       });
       let resJson = await res.json();
       if (res.status === 200) {
-        console.log('other user:',resJson)
+        console.log('other user:', resJson)
         setOtherUser(resJson)
       } else {
         console.log(res)
@@ -34,14 +34,15 @@ export default function MessageGroupPage() {
     } catch (err) {
       console.log(err);
     }
-  };  
+  };
 
   const loadMessageGroupsData = async () => {
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`;
+      const access_token = await getAccessToken;
       const res = await fetch(backend_url, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`
+          Authorization: `Bearer ${access_token}`
         },
         method: "GET"
       });
@@ -54,10 +55,10 @@ export default function MessageGroupPage() {
     } catch (err) {
       console.log(err);
     }
-  };  
+  };
 
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     //prevents double call
     if (dataFetchedRef.current) return;
     dataFetchedRef.current = true;

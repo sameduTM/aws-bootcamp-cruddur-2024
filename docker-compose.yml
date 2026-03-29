@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   backend-flask:
+    container_name: backend-flask
     environment:
       FRONTEND_URL: "http://127.0.0.1:3000"
       BACKEND_URL: "http://127.0.0.1:4567"
@@ -30,6 +31,7 @@ services:
     volumes:
       - ./backend-flask:/backend-flask
   frontend-react-js:
+    container_name: frontend-react-js
     environment:
       REACT_APP_BACKEND_URL: "http://127.0.0.1:4567"
       REACT_APP_AWS_PROJECT_REGION: "ca-central-1"
@@ -42,6 +44,7 @@ services:
     volumes:
       - ./frontend-react-js:/frontend-react-js
   db:
+    container_name: db
     image: postgres:13-alpine
     restart: always
     environment:
@@ -80,6 +83,7 @@ services:
     working_dir: /home/dynamodblocal
 
   xray-daemon:
+    container_name: x-ray-daemon
     image: "amazon/aws-xray-daemon"
     environment:
       AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
