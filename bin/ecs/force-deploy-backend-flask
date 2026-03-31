@@ -13,7 +13,8 @@ LATEST_TASK_DEFINITION_ARN=$(aws ecs describe-task-definition \
 aws ecs update-service \
 --cluster ${CLUSTER_NAME} \
 --service ${SERVICE_NAME} \
---task-definition ${LATEST_TASK_DEFINITION_ARN}
+--task-definition ${LATEST_TASK_DEFINITION_ARN} \
+> /dev/null
 
 aws ecs describe-services \
 --cluster ${CLUSTER_NAME} \

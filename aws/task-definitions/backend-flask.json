@@ -10,6 +10,19 @@
     "memory": "512",
     "containerDefinitions": [
         {
+            "name": "xray",
+            "image": "public.ecr.aws/xray/aws-xray-daemon",
+            "essential": true,
+            "user": "1337",
+            "portMappings": [
+                {
+                    "name": "xray",
+                    "containerPort": 2000,
+                    "protocol": "udp"
+                }
+            ]
+        },
+        {
             "name": "backend-flask",
             "image": "136140697286.dkr.ecr.ca-central-1.amazonaws.com/backend-flask",
             "cpu": 256,

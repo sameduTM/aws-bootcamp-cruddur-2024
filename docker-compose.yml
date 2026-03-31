@@ -2,24 +2,8 @@ version: "3.8"
 services:
   backend-flask:
     container_name: backend-flask
-    environment:
-      FRONTEND_URL: "http://127.0.0.1:3000"
-      BACKEND_URL: "http://127.0.0.1:4567"
-      OTEL_SERVICE_NAME: "backend-flask"
-      OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
-      OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
-      AWS_XRAY_URL: "*127.0.0.1:4567*"
-      AWS_XRAY_DAEMON_ADDRESS: "xray-daemon:2000"
-      AWS_DEFAULT_REGION: "ca-central-1"
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-      AWS_COGNITO_USER_POOL_ID: "ca-central-1_HXjic6wve"
-      AWS_COGNITO_USER_POOL_CLIENT_ID: "4tlq19fpupkjr2c2ecmkqgts72"
-      ROLLBAR_ACCESS_TOKEN: "${ROLLBAR_ACCESS_TOKEN}"
-      FLASK_SECRET_KEY: "fc7a4e6fe095329ea84e82f1e33ad6b46175523481049bc0f9"
-      COGNITO_REGION: "ca-central-1"
-      CONNECTION_URL: "postgresql://postgres:password@db:5432/cruddur"
-      # AWS_ENDPOINT_URL: "http://ddb:8000/"
+    env_file:
+      - .env
     build: ./backend-flask
     ports:
       - "4567:4567"
@@ -30,26 +14,25 @@ services:
         condition: service_healthy
     volumes:
       - ./backend-flask:/backend-flask
+    networks:
+      - default-network
   frontend-react-js:
     container_name: frontend-react-js
-    environment:
-      REACT_APP_BACKEND_URL: "http://127.0.0.1:4567"
-      REACT_APP_AWS_PROJECT_REGION: "ca-central-1"
-      REACT_APP_AWS_COGNITO_REGION: "ca-central-1"
-      REACT_APP_AWS_USER_POOLS_ID: "ca-central-1_HXjic6wve"
-      REACT_APP_CLIENT_ID: "4tlq19fpupkjr2c2ecmkqgts72"
+    env_file:
+      - .env
     build: ./frontend-react-js
     ports:
       - "3000:3000"
     volumes:
       - ./frontend-react-js:/frontend-react-js
+    networks:
+      - default-network
   db:
     container_name: db
     image: postgres:13-alpine
     restart: always
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
+    env_file:
+      - .env
     ports:
       - "5432:5432"
     healthcheck:
@@ -60,6 +43,8 @@ services:
       start_period: 30s
     volumes:
       - db:/var/lib/postgresql/data  
+    networks:
+      - default-network
   ddb:
     # https://stackoverflow.com/questions/67533058/persist-local-dynamodb-data-in-volumes-lack-permission-unable-to-open-databa
     # We needed to add user:root to get this working.
@@ -81,25 +66,27 @@ services:
     volumes:
       - "./docker/dynamodb:/home/dynamodblocal/data"
     working_dir: /home/dynamodblocal
+    networks:
+      - default-network
 
   xray-daemon:
     container_name: x-ray-daemon
     image: "amazon/aws-xray-daemon"
-    environment:
-      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
-      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
-      AWS_REGION: "ca-central-1"
+    env_file:
+      - .env
     command:
       - "xray -o -b xray-daemon:2000"
     ports:
       - 2000:2000/udp
+    networks:
+      - default-network
 
 # the name flag is a hack to change the default prepend folder
 # name when outputting the image names
 networks:
-  internal-network:
+  default-network:
     driver: bridge
-    name: cruddur
+    name: cruddur-net
 
 volumes:
   db:
