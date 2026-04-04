@@ -21,4 +21,4 @@ fi
 
 echo "$CON_URL"
 
-# psql "$CON_URL" cruddur < "$schema_path"
+psql "$CON_URL" cruddur < "$schema_path"

@@ -8,8 +8,8 @@ NO_COLOR=$'\033[0m'
 LABEL="db-seed"
 printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
-seed_path=$(realpath .)/backend-flask/bin/db/seed.sql
-echo $seed_path
+seed_path=$(realpath .)/backend-flask/db/seed.sql
+echo "seed-path: $seed_path"
 
 if [ "$1" == "prod" ]; then
     echo "Connecting to production..."
@@ -20,4 +20,4 @@ fi
 
 echo "$CON_URL"
 
-# psql "$CON_URL" cruddur < "$seed_path"
+psql "$CON_URL" cruddur < "$seed_path"

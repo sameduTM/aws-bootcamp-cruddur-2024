@@ -12,7 +12,6 @@ export default function ActivityContent(props) {
       <BombIcon className='icon' />
       <span className='ago'>{time_ago(props.activity.expires_at)}</span>
     </div>
-
   }
 
   return (
