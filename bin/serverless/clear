@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+set -e
+
+source .env
+
+ABS_PATH=$(readlink -f "$0")
+SERVERLESS_PATH=$(dirname $ABS_PATH)
+DATA_FILE_PATH="$SERVERLESS_PATH/files/data.jpg"
+
+aws s3 rm "s3://assets.$DOMAIN_NAME-${AWS_ACCOUNT_ID}-${AWS_REGION}-an/avatars/original/data.jpg"
+aws s3 rm "s3://assets.$DOMAIN_NAME-${AWS_ACCOUNT_ID}-${AWS_REGION}-an/avatars/processed/data.jpg"

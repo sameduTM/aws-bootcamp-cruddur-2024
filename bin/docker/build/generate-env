@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'erb'
+require 'dotenv'
+
+puts "Hello World!"
+# template = File.read '.env.erb'
+puts ENV["LOGNAME"]

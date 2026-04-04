@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+set -e
+
+ABS_PATH=$(readlink -f "$0")
+TASK_DEFINITION_PATH=$(dirname $(dirname $(dirname $ABS_PATH)))
+
+aws ecs register-task-definition \
+--cli-input-json file://$TASK_DEFINITION_PATH/aws/task-definitions/backend-flask.json

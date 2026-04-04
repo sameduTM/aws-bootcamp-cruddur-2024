@@ -6,9 +6,7 @@ import DesktopSidebar from "../components/DesktopSidebar";
 import ActivityFeed from "../components/ActivityFeed";
 import ActivityForm from "../components/ActivityForm";
 import ReplyForm from "../components/ReplyForm";
-
-// [TODO] Authenication
-import { fetchUserAttributes, fetchAuthSession } from "aws-amplify/auth";
+import { checkAuth, getAccessToken } from "../components/lib/checkAuth";
 
 export default function HomeFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -21,17 +19,13 @@ export default function HomeFeedPage() {
   const loadData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`;
-      const session = await fetchAuthSession();
-      const accessToken = session.tokens?.accessToken?.toString();
-      
-      const user_handle = session.tokens.idToken.payload.preferred_username
+      const access_token = await getAccessToken();
 
       const res = await fetch(backend_url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Username: user_handle,
-        },
+          'Authorization': `Bearer ${access_token}`
+        }
       });
 
       let resJson = await res.json();
@@ -46,21 +40,6 @@ export default function HomeFeedPage() {
     }
   };
 
-  // check if we are authenicated
-
-  const checkAuth = async () => {
-    try {
-      const attributes = await fetchUserAttributes();
-
-      setUser({
-        display_name: attributes.name,
-        handle: attributes.preferred_username,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   // check when the page loads if we are authenicated
   React.useEffect(() => {
     //prevents double call
@@ -68,7 +47,7 @@ export default function HomeFeedPage() {
     dataFetchedRef.current = true;
 
     loadData();
-    checkAuth();
+    checkAuth(setUser);
   }, []);
 
   return (

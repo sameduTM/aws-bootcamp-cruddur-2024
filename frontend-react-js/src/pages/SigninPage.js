@@ -22,6 +22,7 @@ export default function SigninPage() {
       });
 
       if (isSignedIn) {
+
         window.location.href = "/";
       } else if (nextStep.signInStep === "CONFIRM_SIGN_UP") {
         window.location.href = "/confirm";

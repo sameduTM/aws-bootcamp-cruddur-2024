@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+set -e
+
+source .env
+
+ABS_PATH=$(readlink -f "$0")
+BUILD_PATH=$(dirname $ABS_PATH)
+DOCKER_PATH=$(dirname $BUILD_PATH)
+BIN_PATH=$(dirname $DOCKER_PATH)
+PROJECT_PATH=$(dirname $BIN_PATH)
+echo $PROJECT_PATH
+
+BACKEND_FLASK_PATH="$PROJECT_PATH/backend-flask"
+echo $BACKEND_FLASK_PATH
+
+docker build -t backend-flask-prod \
+--build-arg AWS_ENDPOINT_URL="http://dynamodb-local:8000" \
+--build-arg CONNECTION_URL="postgresql://postgres:password@db:5432/cruddur" \
+--build-arg FRONTEND_URL="${FRONTEND_URL}" \
+--build-arg BACKEND_URL="${BACKEND_URL}" \
+--build-arg OTEL_SERVICE_NAME='backend-flask' \
+--build-arg OTEL_EXPORTER_OTLP_ENDPOINT="https://api.honeycomb.io" \
+--build-arg OTEL_EXPORTER_OTLP_HEADERS="x-honeycomb-team=${HONEYCOMB_API_KEY}" \
+--build-arg AWS_XRAY_URL="*127.0.0.1:4567*" \
+--build-arg AWS_XRAY_DAEMON_ADDRESS="xray-daemon:2000" \
+--build-arg AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION}" \
+--build-arg AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" \
+--build-arg AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" \
+--build-arg ROLLBAR_ACCESS_TOKEN="${ROLLBAR_ACCESS_TOKEN}" \
+--build-arg AWS_COGNITO_USER_POOL_ID="${AWS_COGNITO_USER_POOL_ID}" \
+--build-arg AWS_COGNITO_USER_POOL_CLIENT_ID="${COGNITO_APP_CLIENT_ID}" \
+-f $BACKEND_FLASK_PATH/Dockerfile.prod \
+"$BACKEND_FLASK_PATH/."

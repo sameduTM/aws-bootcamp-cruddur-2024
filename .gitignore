@@ -1,2 +1,5 @@
 core
 .env
+docker/**/*
+frontend-react-js/build/*
+misc

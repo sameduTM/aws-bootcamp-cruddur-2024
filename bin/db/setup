@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+set -e # stops if it fails at any point
+
+CYAN=$'\033[1;36m'
+NO_COLOR=$'\033[0m'
+LABEL="db-setup"
+printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
+
+bin_path="$(realpath .)/bin"
+
+# shellcheck source=/dev/null
+bash "$bin_path/db/drop"
+# shellcheck source=/dev/null
+bash "$bin_path/db/create"
+# shellcheck source=/dev/null
+bash "$bin_path/db/schema-load"
+# shellcheck source=/dev/null
+bash "$bin_path/db/seed"
+# python3 "$bin_path/db/update_cognito_user_ids"
+
+# Run as sub-shells instead of 'source'

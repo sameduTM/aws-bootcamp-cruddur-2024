@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+docker run --rm \
+-p 3000:3000 \
+-e REACT_APP_BACKEND_URL: "http://127.0.0.1:4567" \
+-e REACT_APP_AWS_PROJECT_REGION: "ca-central-1" \
+-e REACT_APP_AWS_COGNITO_REGION: "ca-central-1" \
+-e REACT_APP_AWS_USER_POOLS_ID: "ca-central-1_HXjic6wve" \
+-e REACT_APP_CLIENT_ID: "4tlq19fpupkjr2c2ecmkqgts72" \
+-it frontend-react-js-prod
