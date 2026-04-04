@@ -4,6 +4,3 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-24.04
 #     && apt-get -y install --no-install-recommends <your-package-list-here>
 
 # load all the environment variables
-RUN source .env
-# login to aws
-# RUN aws login
