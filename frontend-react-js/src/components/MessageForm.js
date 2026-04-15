@@ -21,8 +21,6 @@ export default function ActivityForm(props) {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/messages`;
       const access_token = await getAccessToken();
 
-      console.log('onsubmit payload', message)
-
       let json = { message: message };
 
       if (params.handle) {

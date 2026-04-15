@@ -17,7 +17,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { Amplify } from 'aws-amplify';
 
-
 Amplify.configure({
   Auth: {
     Cognito: {

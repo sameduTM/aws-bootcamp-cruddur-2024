@@ -30,6 +30,7 @@ from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 
 # CloudWatch Logs
+import boto3
 import watchtower
 import logging
 from time import strftime
@@ -44,15 +45,14 @@ from jwt.exceptions import JWTException
 from lib.cognito_jwt_token import TokenVerify
 
 
-"""
 # Configuring Logger to Use CloudWatch
 LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur')
 LOGGER.addHandler(console_handler)
-LOGGER.addHandler(cw_handler)
-"""
+# LOGGER.addHandler(cw_handler)
+
 
 # Honeycomb ----------
 # Initialize tracing and an exporter that can send data to Honeycomb
@@ -69,7 +69,6 @@ trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
 
 app = Flask(__name__)
-
 
 # Ensure your SECRET_KEY is bytes for the Fernet encryption used by this lib
 # app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
@@ -95,14 +94,14 @@ with app.app_context():
     got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
 
 
-"""# X-RAY -------------
+# X-RAY -------------
 xray_url = os.getenv("AWS_XRAY_URL")
 xray_recorder.configure(service="backend-flask", dynamic_naming=xray_url)
 XRayMiddleware(app, xray_recorder)
 
 # Initialize automatic instrumentation with Flask
 FlaskInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()"""
+RequestsInstrumentor().instrument()
 
 
 @app.route('/api/health-check')
@@ -110,10 +109,10 @@ def health_check():
     return {'success': True}, 200
 
 
-"""@app.route("/rollbar/test")
+@app.route("/rollbar/test")
 def rollbar_test():
     rollbar.report_message("Hello World!", "warning")
-    return "Hello World!"""
+    return {"messaage": "Hello, World!"}
 
 
 @app.route("/api/message_groups", methods=["GET"])
@@ -131,7 +130,7 @@ def data_message_groups():
         else:
             return model["data"], 200
     except Exception as e:
-        app.logger.debug("un-authenticated:", e)
+        app.logger.debug("unauthenticated:", e)
         return {}, 401
 
 
@@ -153,7 +152,7 @@ def data_messages(message_group_uuid):
             return model["data"], 200
 
     except JWTException as e:
-        app.logger.debug("un-authenticated")
+        app.logger.debug("unauthenticated")
         app.logger.debug(e)
         return {}, 401
 
@@ -194,7 +193,7 @@ def data_create_message():
             return model["data"], 200
 
     except Exception as e:
-        app.logger.debug("un-authenticated")
+        app.logger.debug("unauthenticated")
         return {}, 401
 
 
@@ -206,7 +205,7 @@ def data_home():
         app.logger.debug("authenticated")
         data = HomeActivities.run()
     except Exception as e:
-        app.logger.debug("un-authenticated")
+        app.logger.debug("unauthenticated")
         data = HomeActivities.run()
     print(data)
     return data, 200
@@ -220,7 +219,15 @@ def data_notifications():
 
 @app.route("/api/users/@<string:handle>/short", methods=["GET"])
 def data_users_short(handle):
-    data = UsersShort.run(handle)
+    access_token = request.headers.get("Authorization")
+    try:
+        TokenVerify.cognito_jwt_verify(access_token)
+        app.logger.debug("authenticated")
+        data = UsersShort.run(handle)
+    except Exception as e:
+        app.logger.debug("unauthenticated")
+        data = UsersShort.run(handle)
+    print(data)
     return data, 200
 
 
@@ -277,4 +284,4 @@ def data_activities_reply(activity_uuid):
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

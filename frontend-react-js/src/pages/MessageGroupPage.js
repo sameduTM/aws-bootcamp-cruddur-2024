@@ -27,11 +27,13 @@ export default function MessageGroupPage() {
           'Authorization': `Bearer ${access_token}`
         }
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
-        setMessageGroups(resJson)
+        setMessageGroups(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);
@@ -48,11 +50,13 @@ export default function MessageGroupPage() {
           'Authorization': `Bearer ${access_token}`
         }
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
         setMessages(resJson)
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);

@@ -1,5 +1,9 @@
 core
-.env
+.venv
 docker/**/*
 frontend-react-js/build/*
 misc
+.devcontainer/devcontainer.env
+*.venv
+backend-flask/venv
+*.env

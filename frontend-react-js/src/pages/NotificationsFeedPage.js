@@ -23,7 +23,9 @@ export default function NotificationsFeedPage() {
       const res = await fetch(backend_url, {
         method: "GET"
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
         setActivities(resJson)
       } else {

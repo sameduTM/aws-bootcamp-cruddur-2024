@@ -6,7 +6,8 @@ attrs = {'endpoint_url': 'http://localhost:8000'}
 
 if len(sys.argv) == 2:
     if "prod" in sys.argv[1]:
-        attrs = {}
+        print("We get here===")
+        attrs = {'endpoint_url': 'http://dynamodb.ca-central-1.amazonaws.com'}
 
 ddb = boto3.client('dynamodb', **attrs)
 

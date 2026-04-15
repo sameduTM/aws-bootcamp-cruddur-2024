@@ -22,5 +22,6 @@
       "ghcr.io/devcontainers/features/aws-cli:1": {},
       "ghcr.io/itsmechlark/features/postgresql:1": {},
       "ghcr.io/devcontainers/features/ruby:1": {}
-    }
+    },
+    "runArgs": ["--env-file", ".devcontainer/devcontainer.env"]
 }

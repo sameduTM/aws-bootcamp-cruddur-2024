@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM 382764426033.dkr.ecr.ca-central-1.amazonaws.com/cruddur-python:3.10-slim-buster
 
 # create and set /backend-flask folder as working directory
 WORKDIR /backend-flask
