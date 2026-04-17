@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -e # stops if it fails at any point
 
 CYAN=$'\033[1;36m'
