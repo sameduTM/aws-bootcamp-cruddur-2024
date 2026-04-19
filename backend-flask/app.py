@@ -44,12 +44,14 @@ from flask import got_request_exception
 from jwt.exceptions import JWTException
 from lib.cognito_jwt_token import TokenVerify
 
+# create a client for logs
+cloud_client = boto3.client('logs', region_name='ca-central-1')
 
 # Configuring Logger to Use CloudWatch
 LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur')
+cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur', boto3_client=cloud_client)
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
 
