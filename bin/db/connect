@@ -13,4 +13,4 @@ else
     URL=$CONNECTION_URL
 fi
 
-psql "$URL"
+PGPASSWORD="$DB_PASSWORD" psql "$URL"

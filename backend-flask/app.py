@@ -44,17 +44,20 @@ from flask import got_request_exception
 from jwt.exceptions import JWTException
 from lib.cognito_jwt_token import TokenVerify
 
-# create a client for logs
-cloud_client = boto3.client('logs', region_name='ca-central-1')
+cw_logs = boto3.client(
+    'logs',
+    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+    region_name=os.getenv('AWS_DEFAULT_REGION', 'ca-central-1')
+)
 
 # Configuring Logger to Use CloudWatch
 LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur', boto3_client=cloud_client)
+cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)
-
 
 # Honeycomb ----------
 # Initialize tracing and an exporter that can send data to Honeycomb
@@ -74,7 +77,6 @@ app = Flask(__name__)
 
 # Ensure your SECRET_KEY is bytes for the Fernet encryption used by this lib
 # app.config["SECRET_KEY"] = os.getenv("FLASK_SECRET_KEY")
-
 
 frontend = os.getenv("FRONTEND_URL")
 backend = os.getenv("BACKEND_URL")
@@ -276,7 +278,7 @@ def data_show_activity(activity_uuid):
 @app.route("/api/activities/<string:activity_uuid>/reply", methods=["POST", "OPTIONS"])
 @cross_origin()
 def data_activities_reply(activity_uuid):
-    user_handle = "andrewbrown"
+    user_handle = "wekesa884"
     message = request.json["message"]
     model = CreateReply.run(message, user_handle, activity_uuid)
     if model["errors"] is not None:

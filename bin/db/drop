@@ -7,7 +7,7 @@ LABEL="db-drop"
 printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
 NO_DB_CONNECTION_URL=$(sed 's/\/cruddur//g' <<<"$CONNECTION_URL")
-echo $NO_DB_CONNECTION_URL
+echo "$NO_DB_CONNECTION_URL"
 
-psql "$NO_DB_CONNECTION_URL" -c "DROP DATABASE IF EXISTS cruddur;"
+PGPASSWORD="$DB_PASSWORD" psql "$NO_DB_CONNECTION_URL" -c "DROP DATABASE IF EXISTS cruddur;"
 

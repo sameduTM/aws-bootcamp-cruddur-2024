@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -e
 
 source .env
@@ -20,4 +20,4 @@ fi
 
 echo "$CON_URL"
 
-psql "$CON_URL" cruddur < "$seed_path"
+PGPASSWORD="$DB_PASSWORD" psql "$CON_URL" cruddur < "$seed_path"

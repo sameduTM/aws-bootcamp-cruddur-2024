@@ -8,10 +8,10 @@ services:
     ports:
       - "4567:4567"
     depends_on:
-      db:
-        condition: service_healthy
-      ddb:
-        condition: service_healthy
+        db:
+          condition: service_healthy
+        ddb:
+          condition: service_healthy
     volumes:
       - ./backend-flask:/backend-flask
     networks:
