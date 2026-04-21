@@ -302,6 +302,11 @@ def data_update_profile():
             bio=bio,
             display_name=display_name
         )
+        model = UpdateProfile.run(
+            cognito_user_id=cognito_user_id,
+            bio=bio,
+            display_name=display_name
+        )
         if model['errors'] is not None:
             return model['errors'], 422
         else:

@@ -9,7 +9,6 @@ import importlib
 current_path = os.path.dirname(os.path.abspath(__file__))
 parent_path = os.path.abspath(os.path.join(current_path, '..', '..','backend-flask'))
 sys.path.append(parent_path)
-print(parent_path)
 from lib.db import db # type: ignore
 
 def get_last_successful_run():
