@@ -90,8 +90,8 @@ class Db:
     def query_object_json(self, sql, params={}, verbose=True):
         """When we want to return an array of json objects"""
         if verbose:
-            sql('json', sql, params)
-        self.print_params(params)
+            self.print_sql('json', sql, params)
+            self.print_params(params)
         wrapped_sql = self.query_wrap_object(sql)
 
         with self.pool.connection() as conn:

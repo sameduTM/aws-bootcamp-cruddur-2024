@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+echo "Set AWS_SESSION_TOKEN"
+
+export AWS_SESSION_TOKEN=$(aws sts get-session-token --duration-seconds 3600 --query "Credentials.[SessionToken]" --output text)
+
+echo $AWS_SESSION_TOKEN

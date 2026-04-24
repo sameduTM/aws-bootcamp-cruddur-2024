@@ -45,20 +45,23 @@ from flask import got_request_exception
 from jwt.exceptions import JWTException
 from lib.cognito_jwt_token import TokenVerify
 
-cw_logs = boto3.client(
+cw_logs_client = boto3.client(
     'logs',
     aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
     aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
     region_name=os.getenv('AWS_DEFAULT_REGION', 'ca-central-1')
 )
 
+response = cw_logs_client.describe_log_groups()
+
 # Configuring Logger to Use CloudWatch
-LOGGER = logging.getLogger("CloudWatch")
+"""LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
-cw_handler = watchtower.CloudWatchLogHandler(log_group_name='cruddur')
+cw_handler = watchtower.CloudWatchLogHandler(
+    log_group_name='cruddur', boto3_client=cw_logs_client)
 LOGGER.addHandler(console_handler)
-LOGGER.addHandler(cw_handler)
+LOGGER.addHandler(cw_handler)"""
 
 # Honeycomb ----------
 # Initialize tracing and an exporter that can send data to Honeycomb
@@ -67,7 +70,7 @@ processor = BatchSpanProcessor(OTLPSpanExporter())
 provider.add_span_processor(processor)
 
 
-# Show this in the logs within the backedd-flask app STDOUT
+# Show this in the logs within the backend-flask app STDOUT
 simple_processor = SimpleSpanProcessor(ConsoleSpanExporter())
 provider.add_span_processor(simple_processor)
 
@@ -272,7 +275,7 @@ def data_activities():
 
 @app.route("/api/activities/<string:activity_uuid>", methods=["GET"])
 def data_show_activity(activity_uuid):
-    data = ShowActivity.run(activity_uuid=activity_uuid)
+    data = "ShowActivity.run(activity_uuid=activity_uuid)"
     return data, 200
 
 
@@ -294,6 +297,7 @@ def data_update_profile():
     bio = request.json.get('bio', None)
     display_name = request.json.get('display_name', None)
     access_token = request.headers.get("Authorization")
+    print("access_token:", access_token)
     try:
         claims = TokenVerify.cognito_jwt_verify(access_token)
         cognito_user_id = claims['sub']

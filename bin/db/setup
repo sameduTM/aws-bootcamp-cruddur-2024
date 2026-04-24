@@ -19,5 +19,6 @@ bash "$bin_path/db/schema-load"
 bash "$bin_path/db/seed"
 # update cognito user ids
 python3 "$backend_path/bin/cognito/update_cognito_user_ids"
+bash "$bin_path/db/migrate"
 
 # Run as sub-shells instead of 'source'
