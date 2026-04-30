@@ -9,3 +9,4 @@ backend-flask/venv
 *.env
 global-bundle.pem
 load_env_vars
+test.py

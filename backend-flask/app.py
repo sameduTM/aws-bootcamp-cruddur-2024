@@ -45,21 +45,13 @@ from flask import got_request_exception
 from jwt.exceptions import JWTException
 from lib.cognito_jwt_token import TokenVerify
 
-cw_logs_client = boto3.client(
-    'logs',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region_name=os.getenv('AWS_DEFAULT_REGION', 'ca-central-1')
-)
-
-response = cw_logs_client.describe_log_groups()
 
 # Configuring Logger to Use CloudWatch
 """LOGGER = logging.getLogger("CloudWatch")
 LOGGER.setLevel(logging.DEBUG)
 console_handler = logging.StreamHandler()
 cw_handler = watchtower.CloudWatchLogHandler(
-    log_group_name='cruddur', boto3_client=cw_logs_client)
+    log_group_name='cruddur')
 LOGGER.addHandler(console_handler)
 LOGGER.addHandler(cw_handler)"""
 
@@ -322,4 +314,4 @@ def data_update_profile():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

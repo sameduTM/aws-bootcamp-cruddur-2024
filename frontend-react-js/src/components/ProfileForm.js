@@ -1,13 +1,10 @@
 import './ProfileForm.css';
 import React from "react";
 import process from 'process';
-import dotenv from 'dotenv'; 
 import { getAccessToken } from './lib/checkAuth';
 
-dotenv.config();
 
 export default function ProfileForm(props) {
-    const [presignedUrl, setPresignedUrl] = React.useState(0);
     const [bio, setBio] = React.useState(0);
     const [displayName, setDisplayName] = React.useState(0);
 
@@ -17,13 +14,17 @@ export default function ProfileForm(props) {
         // eslint-disable-next-line
     }, [props.profile]);
 
-    const s3uploadkey = async (event) => {
+    const s3uploadkey = async (extension) => {
         try {
-            console.log(process.env.REACT_APP_API_GATEWAY_ENDPOINT_URL)
             const backend_url = `${process.env.REACT_APP_API_GATEWAY_ENDPOINT_URL}/key_upload`;
             const access_token = await getAccessToken();
+            const body = {
+                extension: extension
+            }
+
             const res = await fetch(backend_url, {
                 method: "POST",
+                body: JSON.stringify(body),
                 headers: {
                     // 'Origin': 'http://127.0.0.1:3000',
                     'Authorization': `Bearer ${access_token}`,
@@ -31,8 +32,9 @@ export default function ProfileForm(props) {
                     'Content-Type': 'application/json',
                 }
             });
+
             let data = await res.json();
-            console.log(data);
+
             if (res.status === 200) {
                 return data.url;
             } else {
@@ -47,13 +49,15 @@ export default function ProfileForm(props) {
         const file = event.target.files[0];
         const preview_image_url = URL.createObjectURL(file);
 
-        console.log("file:", file);
-        console.log("filename", file.name);
-        console.log("filetype:", file.type);
-        console.log("filesize:", file.size);
+        const filename = file.name
+
         console.log("preview_image_url", preview_image_url);
 
-        const presignedurl = await s3uploadkey();
+        const fileparts = filename.split('.')
+        const extension = fileparts[fileparts.length-1]
+        const presignedurl = await s3uploadkey(extension);
+
+        console.log("extension:", extension);
         console.log('presignedurl:', presignedurl);
 
         try {
@@ -66,11 +70,7 @@ export default function ProfileForm(props) {
                     'Content-Type': file.type,
                 },
             });
-
-            let data = await res.json();
-
             if (res.status === 200) {
-                setPresignedUrl(data.url);
             } else {
                 console.log(res);
             }

@@ -13,6 +13,8 @@ ddb = boto3.client('dynamodb', **attrs)
 
 table_name = 'cruddur-messages'
 
+print("==== ddb-schema-load")
+
 response = ddb.create_table(
     TableName=table_name,
     AttributeDefinitions=[

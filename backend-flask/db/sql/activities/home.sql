@@ -2,6 +2,7 @@ SELECT
   activities.uuid,
   users.display_name,
   users.handle,
+  users.cognito_user_id as cognito_user_uuid,
   activities.message,
   activities.replies_count,
   activities.reposts_count,

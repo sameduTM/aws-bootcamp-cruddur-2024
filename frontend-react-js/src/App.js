@@ -38,7 +38,7 @@ const router = createBrowserRouter([
     element: <NotificationsFeedPage />,
   },
   {
-    path: "/@:handle",
+    path: "/:handle",
     element: <UserFeedPage />,
   },
   {
@@ -74,7 +74,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <RouterProvider
+        future={{ v7_startTransition: true }} // Enables React's startTransition API
+        router={router} />
     </>
   );
 }

@@ -13,11 +13,11 @@ export const getAccessToken = async () => {
 
 export const checkAuth = async (setUser) => {
     try {
-        const attributes = await fetchUserAttributes();
-
+        const { sub, name, preferred_username } = await fetchUserAttributes();
         setUser({
-            display_name: attributes.name,
-            handle: attributes.preferred_username,
+            cognito_user_uuid: sub,
+            display_name: name,
+            handle: preferred_username,
         });
     } catch (err) {
         console.log(err);

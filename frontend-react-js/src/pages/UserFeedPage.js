@@ -2,15 +2,16 @@ import './UserFeedPage.css';
 import React from "react";
 import { useParams } from 'react-router-dom';
 
-import DesktopNavigation from '../components/DesktopNavigation';
-import DesktopSidebar from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
+import DesktopNavigation from '../components/DesktopNavigation';
+import DesktopSidebar from '../components/DesktopSidebar';
+import ProfileHeading from '../components/ProfileHeading';
+import ProfileForm from '../components/ProfileForm';
 
 // Authentication
 import { checkAuth, getAccessToken } from '../components/lib/checkAuth';
-import ProfileHeading from '../components/ProfileHeading';
-import ProfileForm from '../components/ProfileForm';
+
 
 export default function UserFeedPage() {
   const [activities, setActivities] = React.useState([]);
@@ -24,7 +25,7 @@ export default function UserFeedPage() {
 
   const loadData = async () => {
     try {
-      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/@${params.handle}`;
+      const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/${params.handle}`;
       const access_token = await getAccessToken();
       const res = await fetch(backend_url, {
         method: "GET",
