@@ -23,4 +23,4 @@
       "ghcr.io/itsmechlark/features/postgresql:1": {},
       "ghcr.io/devcontainers/features/ruby:1": {}
     }
-}
+  }

@@ -1,6 +1,6 @@
 /* eslint-disable */
 import "./App.css";
-
+import './components/Popup.css';
 import HomeFeedPage from "./pages/HomeFeedPage";
 import NotificationsFeedPage from "./pages/NotificationsFeedPage";
 import UserFeedPage from "./pages/UserFeedPage";
@@ -16,7 +16,6 @@ import process from "process";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { Amplify } from 'aws-amplify';
-
 
 Amplify.configure({
   Auth: {
@@ -39,7 +38,7 @@ const router = createBrowserRouter([
     element: <NotificationsFeedPage />,
   },
   {
-    path: "/@:handle",
+    path: "/:handle",
     element: <UserFeedPage />,
   },
   {
@@ -75,7 +74,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <RouterProvider
+        future={{ v7_startTransition: true }} // Enables React's startTransition API
+        router={router} />
     </>
   );
 }

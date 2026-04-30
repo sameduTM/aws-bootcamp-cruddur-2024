@@ -6,10 +6,9 @@ export default function MessageItem(props) {
 
   return (
     <div className='message_item'>
-
       <Link className='message_avatar' to={`/messages/@` + props.message.handle}></Link>
       <div className='message_content'>
-        <div classsName='message_meta'>
+        <div className='message_meta'>
           <div className='message_identity'>
             <div className='display_name'>{props.message.display_name}</div>
             <div className="handle">@{props.message.handle}</div>

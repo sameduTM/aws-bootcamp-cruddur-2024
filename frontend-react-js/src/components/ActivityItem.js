@@ -7,7 +7,6 @@ import ActivityActionLike from '../components/ActivityActionLike';
 import ActivityActionShare from '../components/ActivityActionShare';
 
 export default function ActivityItem(props) {
-
   let replies;
   if (props.activity.replies) {
     replies = <div className="replies">

@@ -5,6 +5,12 @@ import { ReactComponent as BombIcon } from './svg/bomb.svg';
 import { format_datetime, message_time_ago, time_ago } from './lib/DateTimeFormats';
 
 export default function ActivityContent(props) {
+  const backgroundImage = `url("https://assets.codeken.me/avatars/${props.activity.cognito_user_uuid}.jpg")`;
+  const styles = {
+    backgroundImage,
+    backgroudSize: 'cover',
+    backgroundPostition: 'center',
+  }
 
   let expires_at;
   if (props.activity.expires_at) {
@@ -16,7 +22,7 @@ export default function ActivityContent(props) {
 
   return (
     <div className='activity_content_wrap'>
-      <div className='activity_avatar'></div>
+      <div className='activity_avatar' style={styles}></div>
       <div className='activity_content'>
         <div className='activity_meta'>
           <Link className='activity_identity' to={`/@` + props.activity.handle}>

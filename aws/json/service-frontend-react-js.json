@@ -6,7 +6,7 @@
     "enableExecuteCommand": true,
     "loadBalancers": [
         {
-            "targetGroupArn": "arn:aws:elasticloadbalancing:ca-central-1:136140697286:targetgroup/cruddur-frontend-tg/e32c8f7ff89d3de8",
+            "targetGroupArn": "arn:aws:elasticloadbalancing:ca-central-1:382764426033:targetgroup/cruddur-frontend-react-js-tg/ac66db22efa21eef",
             "containerName": "frontend-react-js",
             "containerPort": 3000
         }
@@ -15,12 +15,12 @@
         "awsvpcConfiguration": {
             "assignPublicIp": "ENABLED",
             "securityGroups": [
-                "sg-0c1cf108cda672e52"
+                "sg-080e64ed056cb343c"
             ],
             "subnets": [
-                "subnet-05279929cc0faa801",
-                "subnet-0f8fdc71d1ed188f6",
-                "subnet-0a65b069b67c1f020"
+                "subnet-071568fe7d12f82ad",
+                "subnet-07d0df1e9a6908819",
+                "subnet-03ee40daf40546268"
             ]
         }
     },

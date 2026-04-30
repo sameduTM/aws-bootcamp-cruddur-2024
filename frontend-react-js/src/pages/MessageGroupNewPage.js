@@ -21,15 +21,21 @@ export default function MessageGroupPage() {
   const loadUserShortData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/users/@${params.handle}/short`
+      const access_token = await getAccessToken();
       const res = await fetch(backend_url, {
-        method: "GET"
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
-        console.log('other user:', resJson)
-        setOtherUser(resJson)
+        console.log('other user:', resJson);
+        setOtherUser(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);
@@ -39,18 +45,20 @@ export default function MessageGroupPage() {
   const loadMessageGroupsData = async () => {
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/message_groups`;
-      const access_token = await getAccessToken;
+      const access_token = await getAccessToken();
       const res = await fetch(backend_url, {
+        method: "GET",
         headers: {
           Authorization: `Bearer ${access_token}`
-        },
-        method: "GET"
+        }
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
-        setMessageGroups(resJson)
+        setMessageGroups(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);

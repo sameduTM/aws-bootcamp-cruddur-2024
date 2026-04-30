@@ -23,7 +23,9 @@ export default function NotificationsFeedPage() {
       const res = await fetch(backend_url, {
         method: "GET"
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
         setActivities(resJson)
       } else {
@@ -59,12 +61,17 @@ export default function NotificationsFeedPage() {
           setActivities={setActivities}
           activities={activities}
         />
-        <ActivityFeed
-          title="Notifications"
-          setReplyActivity={setReplyActivity}
-          setPopped={setPoppedReply}
-          activities={activities}
-        />
+        <div className="activity_feed">
+          <div className='activity_feed_heading'>
+            <div className='title'>Notifications</div>
+          </div>
+          <ActivityFeed
+            title="Notifications"
+            setReplyActivity={setReplyActivity}
+            setPopped={setPoppedReply}
+            activities={activities}
+          />
+        </div>
       </div>
       <DesktopSidebar user={user} />
     </article>

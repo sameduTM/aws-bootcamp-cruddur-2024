@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -e
 
 CYAN=$'\033[1;36m'
@@ -13,4 +13,4 @@ else
     URL=$CONNECTION_URL
 fi
 
-psql "$URL"
+PGPASSWORD="$DB_PASSWORD" psql "$URL"

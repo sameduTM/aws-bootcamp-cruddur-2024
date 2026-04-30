@@ -3,15 +3,15 @@ services:
   backend-flask:
     container_name: backend-flask
     env_file:
-      - .env
+      - .backend-flask.env
     build: ./backend-flask
     ports:
       - "4567:4567"
     depends_on:
-      db:
-        condition: service_healthy
-      ddb:
-        condition: service_healthy
+        db:
+          condition: service_healthy
+        ddb:
+          condition: service_healthy
     volumes:
       - ./backend-flask:/backend-flask
     networks:
@@ -19,7 +19,7 @@ services:
   frontend-react-js:
     container_name: frontend-react-js
     env_file:
-      - .env
+      - .frontend-react-js.env
     build: ./frontend-react-js
     ports:
       - "3000:3000"
@@ -32,15 +32,15 @@ services:
     image: postgres:13-alpine
     restart: always
     env_file:
-      - .env
+      - .db.env
     ports:
       - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 1m30s
-      timeout: 30s
+      interval: 10s
+      timeout: 5s
       retries: 5
-      start_period: 30s
+      start_period: 10s
     volumes:
       - db:/var/lib/postgresql/data  
     networks:
@@ -60,7 +60,7 @@ services:
         ]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
     ports:
       - "8000:8000"
     volumes:
@@ -73,7 +73,7 @@ services:
     container_name: x-ray-daemon
     image: "amazon/aws-xray-daemon"
     env_file:
-      - .env
+      - .xray-daemon.env
     command:
       - "xray -o -b xray-daemon:2000"
     ports:

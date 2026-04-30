@@ -1,4 +1,4 @@
-FROM python:3.10-slim-buster
+FROM 382764426033.dkr.ecr.ca-central-1.amazonaws.com/cruddur-python:3.10-slim-buster
 
 # create and set /backend-flask folder as working directory
 WORKDIR /backend-flask
@@ -18,5 +18,7 @@ ENV PORT=4567
 
 EXPOSE ${PORT}
 
+ENV PYTHONUNBUFFERED=1
+
 # python3 -m flask run --host=0.0.0.0 --port=4567
-CMD ["python3", "-m", "flask", "run", "--host=0.0.0.0", "--port=4567", "--debug"]
+CMD ["python3", "-u", "-m", "flask", "run", "--host=0.0.0.0", "--port=4567", "--debug"]

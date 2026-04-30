@@ -6,14 +6,14 @@ LABEL="db-sessions"
 printf "%s==== %s%s\n" "${CYAN}" "${LABEL}" "${NO_COLOR}"
 
 if [ "$1" == "prod" ]; then
-    echo "Connecting to production"
+    echo "Connecting to production: $PROD_CONNECTION_URL"
     URL=$PROD_CONNECTION_URL
 else
     URL=$CONNECTION_URL
 fi
 
 NO_DB_URL=$(sed 's/\/cruddur//g' <<<"$URL")
-psql "$NO_DB_URL" -c "select pid as process_id, \
+PGPASSWORD="$DB_PASSWORD" psql "$NO_DB_URL" -c "select pid as process_id, \
        usename as user,  \
        datname as db, \
        client_addr, \

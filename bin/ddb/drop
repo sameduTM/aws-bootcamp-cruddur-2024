@@ -1,6 +1,10 @@
 #!/usr/bin/bash
-
 set -e # stop if it fails at any point
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="ddb-drop"
+printf "${CYAN}==== ${LABEL}${NO_COLOR}\n"
 
 if [ -z "$1" ]; then
     echo "No TABLE_NAME argument supplied eg ./bin/ddb/drop cruddur-messages prod"

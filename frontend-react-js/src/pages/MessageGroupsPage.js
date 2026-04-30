@@ -22,11 +22,13 @@ export default function MessageGroupsPage() {
           'Authorization': `Bearer ${access_token}`
         }
       });
+
       let resJson = await res.json();
+
       if (res.status === 200) {
-        setMessageGroups(resJson)
+        setMessageGroups(resJson);
       } else {
-        console.log(res)
+        console.log(res);
       }
     } catch (err) {
       console.log(err);
