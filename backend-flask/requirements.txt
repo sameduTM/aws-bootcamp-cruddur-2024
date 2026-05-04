@@ -1,6 +1,7 @@
 aws-xray-sdk
 blinker
 boto3
+cfn-lint
 cognitojwt
 flask
 flask-cors

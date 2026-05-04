@@ -5,7 +5,7 @@ frontend-react-js/build/*
 misc
 .devcontainer/devcontainer.env
 *.venv
-backend-flask/venv
+backend-flask/.venv
 *.env
 global-bundle.pem
 test.py
